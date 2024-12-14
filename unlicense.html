@@ -1,0 +1,272 @@
+<html>
+<head>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Unlicense</title>
+	
+	<link rel="stylesheet" href="./assets/atom-one-dark.min.css">
+	
+	<script src="./assets/highlight.min.js"></script>
+	<script src="./assets/go.min.js"></script>
+	<script src="./assets/marked.min.js"></script>
+	
+	<style>
+
+		:root {
+			--bg-primary: #0d1117;
+			--bg-secondary: #161b22;
+			--bg-tertiary: #21262d;
+			--text-primary: #e6edf3;
+			--text-secondary: #8b949e;
+			--accent-primary: #2ecc71;
+			--accent-secondary: #3498db;
+			--border-color: #30363d;
+		}
+
+		body {
+			background-color: #000000;
+			font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+			line-height: 1.6;
+			margin: 0;
+			padding: 0;
+			color: var(--text-primary);
+			background: var(--bg-primary);
+		}
+
+		.container {
+			color: #999990;
+			background-color: #0F0F0F;
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 2rem;
+		}
+
+		.content {
+			color: #FFFFF0;
+			background-color: #D0D0D0;
+		}
+		
+		.center {
+			align: center;
+			color: #999990;
+			background-color: #1F1F10;
+		}
+		
+		#title {
+			margin: 0 auto;
+		}
+		
+		br { 
+			margin-bottom: 1rem;
+		}
+		
+		p { 
+			text-align: center;
+			width: 300px;
+			margin: 0 auto;
+			border-radius: 12px;
+			border: 1px solid #202018;
+			box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+			justify-content: space-between;
+			margin-bottom: 0.3rem;
+			border-bottom: 1px solid var(--border-color);
+		}
+		
+		pre { 
+			text-align: center;
+			border-radius: 12px;
+			border: 1px solid #202018;
+			box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+			justify-content: space-between;
+			margin-bottom: 0.3rem;
+			border-bottom: 1px solid var(--border-color);
+		}
+		
+		.host { 
+			width: 250px;
+		}
+		
+		.repo-content {
+			align: center;
+			background: var(--bg-secondary);
+			padding: 2rem;
+			border-radius: 12px;
+		}
+
+		.repo-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 2rem;
+			padding-bottom: 1rem;
+			border-bottom: 1px solid var(--border-color);
+		}
+
+		.repo-name {
+			font-size: 1.5rem;
+			color: var(--accent-primary);
+			margin: 0;
+		}
+
+		.repo-details {
+			background: var(--bg-tertiary);
+			padding: 1.5rem;
+			border-radius: 8px;
+			border: 1px solid var(--border-color);
+			font-family: 'Segoe UI', Roboto, sans-serif;
+		}
+
+		.loading {
+			text-align: center;
+			padding: 2rem;
+			color: var(--text-secondary);
+		}
+
+		.error {
+			background: rgba(255, 0, 0, 0.1);
+			border: 1px solid rgba(255, 0, 0, 0.3);
+			padding: 1rem;
+			border-radius: 8px;
+			margin: 1rem 0; 
+			color: #ff6b6b;
+		}
+
+		 
+		.repo-details h1, .repo-details h2, .repo-details h3, 
+		.repo-details h4, .repo-details h5, .repo-details h6 {
+			color: var(--text-primary);
+			margin-top: 24px;
+			margin-bottom: 16px;
+			font-weight: 600;
+			line-height: 1.25;
+		}
+
+		.repo-details a {
+			color: var(--accent-secondary);
+			text-decoration: none;
+		}
+
+		.repo-details a:hover {
+			text-decoration: underline;
+		}
+
+		.repo-details pre {
+			background: var(--bg-primary);
+			padding: 16px;
+			border-radius: 6px;
+			overflow-x: auto;
+			margin: 16px 0;
+		}
+
+		.repo-details code {
+			font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+			font-size: 85%;
+			padding: 0.2em 0.4em;
+			border-radius: 6px;
+			background: var(--bg-primary);
+		}
+
+		.repo-details pre code {
+			padding: 0;
+			background: transparent;
+		}
+
+		.repo-details blockquote {
+			padding: 0 1em;
+			color: var(--text-secondary);
+			border-left: 0.25em solid var(--border-color);
+			margin: 0;
+		}
+
+		.repo-details table {
+			border-collapse: collapse;
+			width: 50%;
+			margin: 16px 0;
+		}
+
+		.repo-details table th,
+		.repo-details table td {
+			padding: 6px 13px;
+			border: 1px solid var(--border-color);
+		}
+
+		.repo-details table tr {
+			background-color: var(--bg-secondary);
+		}
+
+		.repo-details table tr:nth-child(2n) {
+			background-color: var(--bg-tertiary);
+		}
+
+		.repo-details img {
+			max-width: 100%;
+			height: auto;
+		}
+	</style>
+
+
+</head>
+
+<body>
+
+<div class="container">
+  <div class="repo-content">
+	<div class="repo-header">
+		<h1 class="repo-name">kontains/volt</h1>
+		<div id="title">
+			<pre style="line-height: 1;">█▀▀ █ ▀█▀ █░█ █░█ █▄▄ ░ █▀▀ █▀▀
+█▄█ █ ░█░ █▀█ █▄█ █▄█ ▄ █▄█ █▄█</pre>
+		</div>
+	</div>
+
+	<div id="content" class="repo-details" style="display: block;">
+
+	TotalTokens: 264
+
+	<div id="title"><p>LICENSE<br>README.md</p></div>
+
+	<br>
+
+	<div id="title"><p>README.md</p>
+	<pre><code class="language-md hljs language-markdown" data-highlighted="yes"><span class="hljs-section"># volt</span>
+	Agent Platform
+	</code></pre>
+	</div>
+
+	<div id="title"><p>LICENSE</p>
+	
+		<pre><code data-highlighted="yes" class="center">This <span class="hljs-section">is</span> free and unencumbered software released into the <span class="hljs-section">public</span> domain.
+Anyone <span class="hljs-section">is</span> free to copy, modify, publish, use, compile, sell, or
+distribute <span class="hljs-section">this</span> software, either <span class="hljs-section">in</span> source code form or <span class="hljs-section">as</span> a compiled
+binary, <span class="hljs-section">for</span> any purpose, commercial or non-commercial, and <span class="hljs-section">by</span> any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of <span class="hljs-section">this</span> software dedicate any and all copyright interest <span class="hljs-section">in</span> the
+software to the <span class="hljs-section">public</span> domain. We make <span class="hljs-section">this</span> dedication <span class="hljs-section">for</span> the benefit
+of the <span class="hljs-section">public</span> at large and to the detriment of our heirs and
+successors. We intend <span class="hljs-section">this</span> dedication to be an overt act of
+relinquishment <span class="hljs-section">in</span> perpetuity of all present and future rights to <span class="hljs-section">this</span>
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED <span class="hljs-string">"AS IS"</span>, WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to &lt;https:<span class="hljs-comment">//unlicense.org&gt;</span>
+		</code></pre>
+
+		</div>
+	</div>
+</div>
+<br>
+</div>
+
+</body>
+</html>
+
