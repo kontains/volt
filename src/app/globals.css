@@ -1,23 +1,24 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #1E1919;
-  --foreground: #999999;
+@font-face {
+  font-family: "Aeonik";
+  src: url("/Aeonik/Aeonik-Regular.ttf");
+  font-weight: 400;
+  font-style: normal;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0A0A0A;
-    --foreground: #C0C0C0;
-  }
+@font-face {
+  font-family: "Aeonik";
+  src: url("/Aeonik/Aeonik-Medium.ttf");
+  font-weight: 500;
+  font-style: normal;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  font-color: white;
+@font-face {
+  font-family: "Aeonik";
+  src: url("/Aeonik/Aeonik-Bold.ttf");
+  font-weight: 700;
+  font-style: normal;
 }

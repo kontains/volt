@@ -1,5 +1,5 @@
 
-// actions.jsx
+// actions.tsx
 
 "use server";
 
@@ -8,7 +8,7 @@ import { streamText } from "ai";
 import { createStreamableValue } from "ai/rsc";
 import { Message } from "./types";
 
-export async function continueConversation(history) {
+export async function continueConversation(history: Message[]): Promise<{ messages: Message[]; newMessage: string }> {
   "use server";
 
   const stream = createStreamableValue();
