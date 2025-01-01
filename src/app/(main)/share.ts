@@ -1,12 +1,11 @@
+
+// share.ts
+
 "use server";
 
-import client from "@/lib/prisma";
+import client from "/components/lib/prisma";
 
-export async function shareApp({
-                                 generatedCode,
-                                 prompt,
-                                 model,
-                               }: {
+export async function shareApp({ generatedCode, prompt, model, }: {
   generatedCode: string;
   prompt: string;
   model: string;

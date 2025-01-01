@@ -1,6 +1,6 @@
 "use client";
 
-import * as shadcnComponents from "@/utils/shadcn";
+import * as shadcnComponents from "/components/utils/shadcn";
 import { Sandpack } from "@codesandbox/sandpack-react";
 import {
   SandpackPreview,

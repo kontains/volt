@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import CodeViewer from "@/components/code-viewer";
-import client from "@/lib/prisma";
-import type { Metadata } from "next";
+import CodeViewer from "/components/code-viewer";
+import client from "/components/lib/prisma";
+import type { Metadata, NextPageWithLayout } from "next";
 import { cache } from "react";
 
 export async function generateMetadata({
@@ -28,7 +28,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
+const Page: NextPageWithLayout<{ params: { id: string } }> = async ({ params }) => {
   // if process.env.DATABASE_URL is not set, throw an error
   if (typeof params.id !== "string") {
     notFound();
@@ -41,7 +41,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   }
 
   return <CodeViewer code={generatedApp.code} />;
-}
+};
 
 const getGeneratedAppByID = cache(async (id: string) => {
   return client.generatedApp.findUnique({
@@ -50,3 +50,5 @@ const getGeneratedAppByID = cache(async (id: string) => {
     },
   });
 });
+
+export default Page;

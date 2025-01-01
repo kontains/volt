@@ -1,4 +1,4 @@
-import shadcnDocs from "@/utils/shadcn-docs";
+import shadcnDocs from "/components/utils/shadcn-docs";
 import dedent from "dedent";
 import { z } from "zod";
 
