@@ -3,29 +3,6 @@
 <p align="center">
   Code Agent – writing apps locally, mostly with Qwen.
 </p>
-<<<<<<< HEAD
-
-### Local LLMs
-
-- Ollama server (required)
-- Qwen models by Alibaba (optional)
-
-### Current build
-
-- Next.js app router with React/Tailwind
-- some components from Llamacoder
-- code sandbox by Sandpack
-
-### Cloning & running
-
-1. Clone the repo: `git clone https://github.com/kontains/volt`
-2. Start [Ollama](https://github.com/ollama/ollama/releases/) server on your machine.
-3. Run `npm install --legacy-peer-deps` then `npm run dev` to run locally.
-
-
----
-=======
->>>>>>> volt/dev
 
 ### Local LLMs
 
