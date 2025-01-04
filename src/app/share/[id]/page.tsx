@@ -1,3 +1,6 @@
+
+// page.tsx [id]
+
 import { notFound } from "next/navigation";
 import CodeViewer from "/components/code-viewer";
 import client from "/components/lib/prisma";
@@ -20,7 +23,7 @@ export async function generateMetadata({
   searchParams.set("prompt", prompt);
 
   return {
-    title: "An app generated on OllamaCoder",
+    title: "Volt app",
     description: `Prompt: ${generatedApp?.prompt}`,
     openGraph: {
       images: [`/api/og?${searchParams}`],

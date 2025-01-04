@@ -18,6 +18,7 @@ export async function POST(req: Request) {
       ),
     })
     .safeParse(json);
+  console.log("model = " + result.model);
 
   if (result.error) {
     return new Response(result.error.message, { status: 422 });
@@ -37,7 +38,19 @@ export async function POST(req: Request) {
       stream: true,
     }),
   });
+  
+  // testing stream
+  const readableStream = new ReadableStream({
+    async start(controller) {
+      for await (const chunk of response.stream) {
+        const chunkText = chunk.text();
+        controller.enqueue(new TextEncoder().encode(chunkText));
+      }
+      controller.close();
+    },
+  });
 
+  // return new Response(readableStream);
   return new Response(response.body);
 }
 
@@ -91,7 +104,7 @@ function getSystemPrompt(shadcn: boolean) {
     NO OTHER LIBRARIES (e.g. zod, hookform) ARE INSTALLED OR ABLE TO BE IMPORTED.
   `;
 
-  console.log("Here is the system prompt");
+  console.log("System prompt");
   console.log(systemPrompt);
 
 

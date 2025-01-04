@@ -4,20 +4,21 @@
 "use client";
 
 import CodeViewer from "/components/code-viewer";
-import { useScrollTo } from "/components/hooks/use-scroll-to";
+import LoadingDots from "/components/loading-dots";
 import { domain } from "/components/utils/domain";
 import { CheckIcon } from "@heroicons/react/16/solid";
 import { ArrowLongRightIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
+import { SandpackEditor } from '@codesandbox/sandpack-react';
+import { useScrollTo } from "/components/hooks/use-scroll-to";
 import * as Select from "@radix-ui/react-select";
 import * as Switch from "@radix-ui/react-switch";
 import * as Tooltip from "@radix-ui/react-tooltip";
+// import Switch from '@headlessui/react';
 import { AnimatePresence, motion } from "framer-motion";
-import { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState, useRef } from "react";
 import { toast, Toaster } from "sonner";
-import LoadingDots from "/components/loading-dots";
-import { shareApp } from "./share.ts";
-
+import { shareApp } from "./share.tsx";
 import { continueConversation, Message } from "./actions.tsx";
 import { readStreamableValue } from "ai/rsc";
 
@@ -25,7 +26,14 @@ function removeCodeFormatting(code: string): string {
   return code.replace(/```(?:typescript|javascript|tsx)?\n([\s\S]*?)```/g, '$1').trim();
 }
 
+// document level..
+function dragStart(event) { event.dataTransfer.setData("text/plain", null); console.log("dragging!"); }
+
+// app main homepage
 export default function Home() {
+
+  const [screenConstraints, setScreenConstraints] = useState({ top: 0, left: 0, right: 0, bottom: 0 });
+
   let [status, setStatus] =
     useState<"initial" | "creating" | "created" | "updating" | "updated">("initial");
   let [prompt, setPrompt] = useState("");
@@ -39,103 +47,71 @@ export default function Home() {
     (async () => fetchModels())();
   }, []);
   
+   useEffect(() => {
+    (async () => toggleSwitch())();
+  }, []);
+  
+  useEffect(() => {
+    const updateScreenConstraints = () => {
+      const { innerWidth, innerHeight } = window;
+      setScreenConstraints({
+        top: -20,
+        left: 0 - innerWidth / 2 + 50,
+        right: innerWidth - (innerWidth / 2) - 50,
+        bottom: innerHeight - 120,
+      });
+    };
+
+    window.addEventListener('resize', updateScreenConstraints);
+    updateScreenConstraints();
+
+    return () => {
+      window.removeEventListener('resize', updateScreenConstraints);
+    };
+  }, []);
+  
+  // set first model as default
+  useEffect(() => {
+    if (models.length > 0) { setModel(models[0].value || ""); }
+  }, [models]);
+  
   let [model, setModel] = useState<string>(models[0]?.value || "");
+  
+  // await sandpack ...
+  // useEffect(() => {
+  //  (async () => preloadSandpackApp())();
+  // }, []);
+
+  
   let [shadcn, setShadcn] = useState<boolean>(false);
+  let [toggle, setToggle] = useState<boolean>(false);
+  
   let [modification, setModification] = useState<string>("");
   let [generatedCode, setGeneratedCode] = useState<string>("");
   let [initialAppConfig, setInitialAppConfig] = useState({
     model: "",
-    shadcn: false,
+    shadcn: true,
   });
-
+  
   let [ref, scrollTo] = useScrollTo();
   let [messages, setMessages] = useState<{ role: string; content: string }[]>(
     [],
   );
+
   let [isPublishing, setIsPublishing] = useState(false);
   let loading = status === "creating" || status === "updating";
 
-/*
-  async function fetchModels() {
-    const res = await fetch("/api/fetchModels", {
-      method: "GET",
-    });
-    const jsonRes = await res.json();
-    const models = jsonRes.models.map(model => ({
-        label: model.name,
-        value: model.model
-      }));
-    setModels(models)
-  }
-*/
-
-  const fetchModels = async () => {
-    try {
-      const response = await fetch('/api/fetchModels', { method: "GET" });
-      if (!response.ok) {
-        // throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
-		throw new Error(response.statusText);
-      }
-      if (!response.body) {
-        throw new Error("No response body");
-      }
-	  
-	  /*
-	  const reader = response.body.getReader();
-	  let receivedData = "";
-      while (true) {
-          const { done, value } = await reader.read();
-          if (done) {
-            break;
-          }
-          const receivedLines = new TextDecoder().decode(value);
-          receivedLines.split("\n")
-            .filter(receivedLine => receivedLine.length > 0)
-            .forEach(receivedLine => {
-              console.log('Received Line:', receivedLine); // Log each line
-              try {
-                receivedData += JSON.parse(receivedLine).response;
-              } catch (error) {
-                console.error('Invalid JSON:', receivedLine, error);
-              }
-		  }
-	  }
-	  */
-	  
-      const jsonRes = await response.json();
-	  const models = jsonRes.models.map(model => ({
-        label: model.name,
-        value: model.model
-      }));
-      setModels(models)
-	  
-	  // disabled...
-	  // const cleanedData = removeCodeFormatting(receivedData);
-      // setGeneratedCode(cleanedData);
-	  
-    } catch (error) {
-      console.error('Error fetching models:', error);
-    }
-  }
-
-  useEffect(() => {
-    if (models.length > 0) {
-      setModel(models[0].value || "");
-    }
-  }, [models]);
-  
-  // create app
-  async function createApp(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function createApp(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
     if (status !== "initial") {
-      scrollTo({ delay: 0.5 });
+      scrollTo({ delay: 1.5 });
     }
 
     setStatus("creating");
     setGeneratedCode("");
 
-    let res = await fetch("/api/generateCode", {
+    let response = await fetch("/api/generateCode", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -146,25 +122,45 @@ export default function Home() {
         messages: [{ role: "user", content: prompt }],
       }),
     });
-    await processGeneratedCode(res);
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body");
+    }
+
+    const reader = response.body.getReader();
+    let receivedData = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+      receivedData += new TextDecoder().decode(value);
+      const cleanedData = removeCodeFormatting(receivedData);
+      setGeneratedCode(cleanedData);
+    }
 
     setMessages([{ role: "user", content: prompt }]);
     setInitialAppConfig({ model, shadcn });
     setStatus("created");
   }
 
-  // update app
-  async function updateApp(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
+    // update app
+  async function updateApp(event: FormEvent<HTMLFormElement>) {
+  
+    event.preventDefault();
     setStatus("updating");
-
+	
     let codeMessage = { role: "assistant", content: generatedCode };
     let modificationMessage = { role: "user", content: modification };
-
+	
     setGeneratedCode("");
-
-    let res = await fetch("/api/generateCode", {
+	
+    let response = await fetch("/api/generateCode", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -176,108 +172,193 @@ export default function Home() {
       }),
     });
 	
-    await processGeneratedCode(res);
-
+    if (response) {
+	  setStatus("Ollama response found! Processing...");
+	  await processGeneratedCode(response);
+	} else {
+	  setStatus("no response from Ollama");
+	}
+	
     setMessages(messages => [...messages, codeMessage, modificationMessage]);
     setStatus("updated");
 	
-	// testing prompt resizing..
-	var prompt = document.querySelector('prompt'); // get the prompt element
-    prompt.addEventListener('prompt', resizeInput); // bind the "resizeInput" callback on "prompt" event
-    resizeInput.call(prompt); // immediately call the function
-
   }
-
-/*
-  async function processGeneratedCode(res: Response) {
-    if (!res.ok) {
-      throw new Error(res.statusText);
+  
+  // scroll to
+  useEffect(() => {
+    let element = document.querySelector(".cm-scroller");
+    if (element && loading) {
+      let end = element.scrollHeight - element.clientHeight;
+      element.scrollTo({ top: end });
     }
-    if (!res.body) {
-      throw new Error("No response body");
-    }
-    const reader = res.body.getReader();
+  }, [loading, generatedCode]);
+  
+  
+  // create chat
+  async function createChat(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus("chat-mode");
+    setGeneratedCode("");
+    let response = await fetch("/api/generateCode", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        shadcn,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    if (!response.ok) { throw new Error(response.statusText); }
+    if (!response.body) { throw new Error("No response body"); }
+    const reader = response.body.getReader();
     let receivedData = "";
     while (true) {
       const { done, value } = await reader.read();
       if (done) { break; }
-      const receivedLines = new TextDecoder().decode(value);
-      receivedLines.split("\n")
-        .filter(receivedLines => receivedLines.length > 0)
-        .forEach(receivedLine => {
-          receivedData += JSON.parse(receivedLine).response;
-        })
+      receivedData += new TextDecoder().decode(value);
       const cleanedData = removeCodeFormatting(receivedData);
       setGeneratedCode(cleanedData);
     }
+    setMessages([{ role: "user", content: prompt }]);
+    // setInitialAppConfig({ model, shadcn });
+    // setStatus("created");
   }
-*/
-
-  // logging
-  async function processGeneratedCode(res: Response) {
-   if (!res.ok) { throw new Error(res.statusText);  }
-   if (!res.body) { throw new Error("No response body"); }
-   const reader = res.body.getReader();
-   let receivedData = "";
-   
-   while (true) {
-    const { done, value } = await reader.read();
-    if (done) { break; }
-    const receivedLines = new TextDecoder().decode(value);
-    receivedLines.split("\n")
-      .filter(receivedLine => receivedLine.length > 0)
-      .forEach(receivedLine => {
-        console.log('Received Line:', receivedLine); // Log each line
-        try {
-          receivedData += JSON.parse(receivedLine).response;
-        } catch (error) {
-          console.error('Invalid JSON:', receivedLine, error);
-        }
-      });
-   }
-
-   const cleanedData = removeCodeFormatting(receivedData);
-   setGeneratedCode(cleanedData);
-   
-  }
-
-  useEffect(() => {
-    let scroll = document.querySelector(".cm-scroller");
-    if (scroll && loading) {
-      let end = scroll.scrollHeight - scroll.clientHeight;
-      scroll.scrollTo({ top: end });
+  
+  // fetch models
+  const fetchModels = async () => {
+    try {
+      const response = await fetch('/api/fetchModels', { method: "GET" });
+      if (!response.ok) {
+        // throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
+		throw new Error(response.statusText);
+      }
+      if (!response.body) { throw new Error("No response body"); }
+	  
+      const jsonRes = await response.json();
+	  const models = jsonRes.models.map(model => ({
+        label: model.name,
+        value: model.model
+      }));
+      setModels(models)
+	  
+    } catch (error) {
+      console.error('Error fetching models:', error);
     }
-  }, [loading, generatedCode]);
+  }
+  
+  // function dragStart(event) { event.dataTransfer.setData("text/plain", null); console.log("dragging!"); }
+  
+  // toggle switch..
+  const toggleSwitch = async () => {
+    try {
+      console.log("toggle!" + event);
 
-  // todo: /component/Menu.tsx
+      return (
+        <div className="flex h-full items-center justify-between gap-3 sm:justify-center">
+          <Switch.Root
+            className="group flex w-20 max-w-xs items-center rounded-2xl border-[6px] border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1E293B] p-1.5 text-sm shadow-inner transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 data-[state=checked]:bg-blue-500 dark:data-[state=checked]:bg-blue-500"
+            id="toggle"
+            name="toggle"
+            checked={toggle}
+            onCheckedChange={(value) => setToggle(value)}
+          >
+            <Switch.Thumb className="size-7 rounded-lg bg-gray-200 dark:bg-gray-700 shadow-[0px_1px_2px] shadow-gray-400 dark:shadow-black transition data-[state=checked]:translate-x-7 data-[state=checked]:bg-white dark:data-[state=checked]:bg-white data-[state=checked]:shadow-gray-600" />
+          </Switch.Root>
+        </div>
+      );
+    } catch (error) {
+      console.error('Error fetching models:', error);
+    }
+  }
+  
+  // preload app.tsx ... (await sandpack)
+  const preloadSandpackApp = async () => {
+    const loadFiles = {
+      '/src/App.tsx': {
+        code: `
+        // sandpack react
+        import React from 'react';
+        
+        // Edit me!
+        export default function App () {
+          const [count, setCount] = useState(0)
+          return (
+            <button onClick={() => setCount(count + 1)}>
+              Clicked {count} times
+            </button>
+          )
+        }
 
+        export default App;
+        `,
+        hidden: false,
+      },
+    }
+    return (
+      <Sandpack
+        files={loadFiles}
+        options={{
+		  readOnly: false,
+          editorHeight: "80vh",
+          showConsole: true,
+          showLineNumbers: true,
+          showTabs: true,
+          showNavigator: true,
+          ...sharedOptions,
+        }}
+        {...sharedProps}
+      />
+    )
+  }
+
+//------------- main template --------------
+
+  
   return (
+
     <main className="mt-12 flex w-full flex-1 flex-col items-center px-4 text-center sm:mt-1">
-    
-	    <div className="absolute -inset-1 px-0 py-0 w-20 h-5 opacity-10">
+	
+      <div className="fixed right-9 top-1 w-20 h-5 opacity-60 focus-within:z-10">
+	    <a href="" target="_self">
           <div className="mb-4 inline-flex h-7 shrink-0 items-center gap-[9px] rounded-[7px] border-[0.5px] border-solid border-[#E6E6E6] bg-[rgba(124,128,145,0.65)] bg-gray-100 px-4 py-3 shadow-[0px_1px_1px_0px_rgba(0,0,0,0.25)]">
-           <a href="" target="_self">
-            <span className="text-center font-small">Menu</span>
-           </a>
-		  </div>
-		</div>
-		
-        <form className="w-full max-w-xl opacity-70" onSubmit={createApp}>
-         <fieldset disabled={loading} className="disabled:opacity-65">
-          <div className="relative mt-4">
-           <div className="absolute -inset-1 rounded-[9px] border-[1px] border-solid border-[#605050] bg-[rgba(104,108,125,0.30)] px-4 py-3 shadow-[0px_2px_3px_2px_rgba(0,0,0,0.25)]" />
-             <div className="relative flex flex-grow items-stretch focus-within:z-10">
+            <span className="text-center font-small">Reset</span>
+          </div>
+        </a>
+		<div className="flex h-full items-center justify-between gap-3 sm:justify-center">
+          <Switch.Root
+              className="group flex w-20 max-w-xs items-center rounded-2xl border-[6px] border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1E293B] p-1.5 text-sm shadow-inner transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 data-[state=checked]:bg-blue-500 dark:data-[state=checked]:bg-blue-500"
+              id="toggle"
+              name="toggle"
+              checked={toggle}
+              onCheckedChange={(value) => setToggle(value)}
+            >
+              <Switch.Thumb className="size-7 rounded-lg bg-gray-200 dark:bg-gray-700 shadow-[0px_1px_2px] shadow-gray-400 dark:shadow-black transition data-[state=checked]:translate-x-7 data-[state=checked]:bg-white dark:data-[state=checked]:bg-white data-[state=checked]:shadow-gray-600" />
+          </Switch.Root>
+        </div>
+      </div>
+      
+      <form className="w-full max-w-xl opacity-65" onSubmit={createApp}>
+        <fieldset disabled={loading} className="disabled:opacity-65">
+          <div className="fixed top-3 left-[310px] w-[750px]">
+            <div className="absolute -inset-1 rounded-[9px] border-[1px] border-solid border-[#605050] bg-[rgba(104,108,125,0.30)] px-4 py-3 shadow-[0px_2px_3px_2px_rgba(0,0,0,0.25)]" />
+            <div className="relative flex flex-grow items-stretch focus-within:z-10">
+              <div className="relative flex flex-grow items-stretch focus-within:z-10">
                 <textarea
                   rows={1}
                   required
+                  value={prompt}
+                  onChange={(event) => setPrompt(event.target.value)}
 				  value={input}
                   onChange={(event) => setInput(event.target.value)}
                   name="prompt"
-                  className="w-full resize-none rounded-l-3xl bg-transparent px-6 py-5 text-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-700 font-semibold text-gray-200 hover:text-orange-400"
-                  placeholder="Build a maze using JS."
+                  className="w-full resize-none rounded-[7px] bg-transparent px-6 py-5 text-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-700 font-semibold text-gray-200 hover:text-orange-400"
+                  placeholder="..."
                 />
-             </div>
-             <button
+              </div>
+			  
+              <button
                 type="submit"
                 disabled={loading}
                 className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-3xl px-3 py-2 text-sm font-semibold text-orange-500 hover:text-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-500 disabled:text-gray-900"
@@ -287,9 +368,12 @@ export default function Home() {
                 ) : (
                   <ArrowLongRightIcon className="-ml-0.5 size-6" />
                 )}
-             </button>
+              </button>
+			  
             </div>
-           <div className="mt-6 flex flex-col justify-center gap-4 sm:flex-row sm:items-center sm:gap-8">
+          </div>
+		  
+          <div className="fixed top-[2px] left-[2px] flex flex-col justify-center gap-4 sm:flex-row sm:items-center sm:gap-8">
             <div className="flex items-center justify-between gap-3 sm:justify-center">
               <Select.Root
                 name="model"
@@ -330,83 +414,37 @@ export default function Home() {
                 </Select.Portal>
               </Select.Root>
              </div>
-            </div>
-         </fieldset>
-        </form>
-	  
-        <div className="relative mt-1 max-w-xl">
-         <form onSubmit={createApp}>
-          <fieldset disabled={loading} className="disabled:opacity-65">
-             <div className="relative flex bg-gray-100 shadow-sm opacity-65">
-			  <span className="relative flex rounded-[7px] bg-gray-100 shadow-sm opacity-65">
-               <button
-                onClick={async () => {
-                  const { messages, newMessage } = await continueConversation([
-                    ...conversation,
-                    { role: "user", content: input },
-                  ]);
-                  let textContent = "";
-                  for await (const delta of readStreamableValue(newMessage)) {
-                    textContent = `${textContent}${delta}`;
-                    setConversation([
-                      ...messages,
-                      { role: "assistant", content: textContent },
-                    ]);
-                  }
-                }}
-               >
-			    <ArrowLongRightIcon className="-ml-0.5 size-6" />
-               </button>
-			  </span>
-             </div>
-          </fieldset>
-         </form>
-		 
-		 
-         <div className="relative inline-flex w-full h-full shrink-0 items-center gap-[9px] rounded-[9px] border-[0.5px] border-solid border-[#E6E6E6] bg-[rgba(124,128,145,0.65)] bg-gray-100 shadow-[0px_1px_1px_0px_rgba(0,0,0,0.25)]">
-            {conversation.map((message, index) => (
-            <div key={index}>
-		      <textarea className="relative inline-flex h-full"
-                name="input"
-                rows={14}
-                required
-                value={message.content}
-                // onChange={(event) => setPrompt(event.target.value)}
-                placeholder=""
-              />
-            </div>
-          ))}
-         </div>
-        </div>
-		
-        <hr className="border-1 mb-10 h-px bg-gray-700 dark:bg-gray-700" />
-
-        {status !== "initial" && (
-         <motion.div
+          </div>
+        </fieldset>
+      </form>
+      
+      {status !== "initial" && (
+        <motion.div
           initial={{ height: 0 }}
           animate={{
             height: "auto",
             overflow: "hidden",
             transitionEnd: { overflow: "visible" },
           }}
-          transition={{ type: "spring", bounce: 0, duration: 0.5 }}
+          transition={{ type: "spring", bounce: 0, duration: 0.9 }}
           className="w-full pb-[25vh] pt-1"
           onAnimationComplete={() => scrollTo()}
           ref={ref}
-         >
-         <div className="mt-5 flex gap-2">
-            <form className="w-full" onSubmit={updateApp}>
+        >
+		<div className="fixed top-[52px] left-[3px] flex w-[270px] max-h-[20px] opacity-20">
+            <form onSubmit={updateApp}>
               <fieldset disabled={loading} className="group">
                 <div className="relative">
-                  <div className="relative flex rounded-3xl bg-white shadow-sm group-disabled:bg-gray-50">
-                    <div className="relative flex flex-grow items-stretch focus-within:z-10">
+				  <div className="w-200 rounded-[9px] border-[1px] border-solid border-[#605050] bg-[rgba(104,108,125,0.30)] shadow-[0px_2px_3px_2px_rgba(0,0,0,0.25)]">
+                   <div className="flex flex-col justify-center gap-4 sm:flex-row sm:items-center sm:gap-8">
+                    <div className="relative py-65 flex items-center justify-between gap-3 sm:justify-center">
                       <input
                         required
                         name="modification"
                         value={modification}
                         onChange={(e) => setModification(e.target.value)}
                         className="w-full rounded-l-3xl bg-transparent text-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed"
-                        placeholder="Change app here"
+                        placeholder="..."
                       />
                     </div>
                     <button
@@ -420,74 +458,14 @@ export default function Home() {
                         <ArrowLongRightIcon className="-ml-0.5 size-6" />
                       )}
                     </button>
+				   </div>
                   </div>
                 </div>
               </fieldset>
             </form>
-            <div>
-              <Toaster invert={true} />
-              <Tooltip.Provider>
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                    <button
-                      disabled={loading || isPublishing}
-                      onClick={async () => {
-                        setIsPublishing(true);
-                        let userMessages = messages.filter(
-                          (message) => message.role === "user",
-                        );
-                        let prompt =
-                          userMessages[userMessages.length - 1].content;
-
-                        const appId = await minDelay(
-                          shareApp({
-                            generatedCode,
-                            prompt,
-                            model: initialAppConfig.model,
-                          }),
-                          2000,
-                        );
-                        setIsPublishing(false);
-                        toast.success(
-                          `Copied to clipboard: http://localhost:port/share/${appId}`,
-                        );
-                        navigator.clipboard.writeText(
-                          `${domain}/share/${appId}`,
-                        );
-                      }}
-                      className="inline-flex h-[34px] w-36 items-center justify-center gap-2 rounded-[5px] bg-[rgba(14,18,25,0.70)] transition enabled:hover:bg-[rgba(14,18,25,0.70)] disabled:grayscale"
-                    >
-                      <span className="relative">
-                        {isPublishing && (
-                          <span className="absolute inset-0 flex items-center justify-center">
-                            <LoadingDots color="white" style="large" />
-                          </span>
-                        )}
-
-                        <ArrowUpOnSquareIcon
-                          className={`${isPublishing ? "invisible" : ""} size-5 text-xl text-white`}
-                        />
-                      </span>
-
-                      <span className="text-sm font-semibold text-orange-600">share</span>
-                    </button>
-                  </Tooltip.Trigger>
-                  <Tooltip.Portal>
-                    <Tooltip.Content
-                      className="select-none rounded bg-white px-4 py-2.5 text-sm leading-none shadow-md shadow-black/20"
-                      sideOffset={5}
-                    >
-                      Publish your app to the internet.
-                      <Tooltip.Arrow className="fill-white" />
-                    </Tooltip.Content>
-                  </Tooltip.Portal>
-                </Tooltip.Root>
-              </Tooltip.Provider>
-            </div>
-         </div>
-
-
-         <div className="relative mt-8 w-full overflow-hidden">
+          </div>
+		  
+          <div className="fixed top-[100px] left-[5px] w-full-minus-10 overflow-hidden">
             <div className="isolate">
               <CodeViewer code={generatedCode} showEditor />
             </div>
@@ -502,11 +480,11 @@ export default function Home() {
                     type: "spring",
                     bounce: 0,
                     duration: 0.85,
-                    delay: 0.5,
+                    delay: 0.9,
                   }}
-                  className="absolute inset-x-0 bottom-0 top-1/2 flex items-center justify-center rounded-r border border-gray-400 bg-gradient-to-br from-gray-100 to-gray-300 md:inset-y-0 md:left-1/2 md:right-0"
+                  className="absolute inset-x-0 bottom-0 top-1/2 flex items-center justify-center rounded-r border border-gray-400 dark:border-gray-700 bg-gradient-to-br from-gray-100 to-gray-300 dark:from-[#1E293B] dark:to-gray-800 md:inset-y-0 md:left-1/2 md:right-0"
                 >
-                  <p className="animate-pulse text-3xl font-small">
+                  <p className="animate-pulse text-3xl font-bold dark:text-gray-100">
                     {status === "creating"
                       ? "Building app..."
                       : "Updating app..."}
@@ -514,35 +492,75 @@ export default function Home() {
                 </motion.div>
               )}
             </AnimatePresence>
-         </div>
+          </div>
         </motion.div>
-       )}
+      )}
+	  
+	  <motion.div 
+         drag
+         dragElastic={0}
+		 dragConstraints={screenConstraints}
+		 dragMomentum={false}
+         dragDirectionLock={false}
+         className="draggable-box"
+         style={{
+          width: '0px',
+          height: '0px',
+          cursor: 'grab',
+		  visible: 'false',
+         }}
+      >
+	    <div className="z-[999] rounded-[9px] opacity-77 border-[1px] border-solid border-[#605050] bg-[rgba(104,108,125,0.30)] px-4 py-3 shadow-[0px_2px_3px_2px_rgba(0,0,0,0.25)]">
+	     <div>
+          <form onSubmit={createChat}>
+            <fieldset disabled={loading} className="disabled:opacity-25">
+              <button className="dark:shadow-black font-bold text-orange-200 hover:text-orange-400"
+                onClick={async () => {
+                  const { messages, newMessage } = await continueConversation([
+                    ...conversation,
+                    { role: "user", content: input },
+                  ]);
+                  let textContent = "";
+                  for await (const delta of readStreamableValue(newMessage)) {
+                    textContent = `${textContent}${delta}`;
+                    setConversation([
+                      ...messages,
+                      { role: "assistant", content: textContent },
+                    ]);
+                  }
+                }}
+              >
+                <span className="font-small">Chat</span>
+              </button>
+            </fieldset>
+          </form>
+        </div>
+
+        <div className="relative inline-flex w-full h-full shrink-0 items-center gap-[9px] rounded-[9px] border-[0.5px] border-solid border-[#E6E6E6] bg-[rgba(124,128,145,0.65)] bg-gray-100 shadow-[0px_1px_1px_0px_rgba(0,0,0,0.25)]">
+          {conversation.map((message, index) => (
+            <div key={index}>
+              <textarea className="relative inline-flex h-full"
+                name="input"
+                rows={12}
+                required
+                value={message.content}
+                onChange={(event) => setPrompt(event.target.value)}
+                placeholder=""
+              />
+            </div>
+          ))}
+        </div>
+       </div>
+      </motion.div>
+
+	  
     </main>
   );
 }
 
-
-// testing input resizing..
-function resizeInput() { this.style.width = this.value.length + "ch"; }
-
-
-// minimum delay
 async function minDelay<T>(promise: Promise<T>, ms: number) {
   let delay = new Promise((resolve) => setTimeout(resolve, ms));
   let [p] = await Promise.all([promise, delay]);
-
   return p;
 }
 
-/*
-
-	 		  <input className="relative flex flex-grow pw-150px ph-20px max-w-xl"
-				size="90"
-				maxLength="900"
-		        name="prompt"
-                type="text"
-                value={input}
-				value={prompt}
-                onChange={(event) => { setInput(event.target.value); }}
-              />
-*/
