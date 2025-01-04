@@ -5,6 +5,19 @@
   Code Agent – writing apps locally, mostly with Qwen.
 </p>
 
+### Local LLMs
+
+- Ollama server (required)
+- Qwen models by Alibaba (optional)
+
+### Current build
+
+- Next.js app router with React/Tailwind.
+- Some components from Llamacoder.
+- Code sandbox by Sandpack.
+
+### Working
+
 - Type a question then click on 'Chat' for assistance.
 
 ### Todo
