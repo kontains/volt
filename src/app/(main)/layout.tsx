@@ -7,12 +7,12 @@ import Image from "next/image";
 import bgImg from "/assets/img/vector.jpg";
 import Footer from "/components/Footer";
 import Header from "/components/Header";
+import ThemeToggle from "/components/ThemeToggle";
 
 let title = "Volt";
 let description = "Coding Agent";
-let url = "http://localhost:8017"; // static port
-let ogimage = "";
-let sitename = "http://localhost:8017"; // static port
+let url = "http://localhost:3000"; // static port?
+let sitename = "http://localhost:3000"; // static port?
 
 export const metadata: Metadata = {
   metadataBase: new URL(url),
@@ -29,25 +29,26 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
-     <body className="bg-black">
+    <div className="bg-black dark:bg-dark antialiased dark:text-gray-100 w-full h-full">
       <div className="absolute inset-x-0 flex justify-center">
         <Image
           src={bgImg}
           alt=""
-          className="w-full h-full mix-blend-screen"
+          className="w-full max-w-[1200px] mix-blend-screen dark:mix-blend-plus-lighter dark:opacity-10"
           priority
         />
       </div>
 
-      <div className="isolate">
+      <div className="isolate relative">
         <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center py-2">
+          <div className="fixed right-2 top-2 z-50">
+            <ThemeToggle />
+          </div>
           <Header />
           {children}
           <Footer />
         </div>
       </div>
-     </body>
-    </html>
+    </div>
   );
 }

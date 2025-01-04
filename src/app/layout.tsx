@@ -7,12 +7,13 @@ import Image from "next/image";
 import bgImg from "/assets/img/vector.jpg";
 import Footer from "/components/Footer";
 import Header from "/components/Header";
+import { ThemeProvider } from "/components/ThemeProvider";
 
 let title = "Volt";
 let description = "Coding Agent";
-let url = "http://localhost:8017"; // static port
+let url = "http://localhost:3000"; // static port
 let ogimage = "";
-let sitename = "http://localhost:8017"; // static port
+let sitename = "http://localhost:3000"; // static port
 
 export const metadata: Metadata = {
   metadataBase: new URL(url),
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Layout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -43,7 +44,9 @@ export default function Layout({
       <div className="isolate">
         <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center py-2">
           <Header />
-          {children}
+           <ThemeProvider>
+             {children}
+           </ThemeProvider>
           <Footer />
         </div>
       </div>

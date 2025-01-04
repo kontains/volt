@@ -1,40 +1,79 @@
+
+// code-viewer.tsx
+
 "use client";
 
 import * as shadcnComponents from "/components/utils/shadcn";
 import { Sandpack } from "@codesandbox/sandpack-react";
-import {
-  SandpackPreview,
-  SandpackProvider,
-} from "@codesandbox/sandpack-react/unstyled";
+import { SandpackPreview, SandpackProvider } from "@codesandbox/sandpack-react/unstyled";
 import { dracula as draculaTheme } from "@codesandbox/sandpack-themes";
 import dedent from "dedent";
 import "./code-viewer.css";
 
+/*
+const defaultFiles = {
+  '/App.jsx': `export default...`,
+  
+  '/Button.jsx': {
+    code: `export default...`,
+    active: true, // Default visible file on load? default `false`
+    hidden: false // File visible in tab list? default `true`
+  }
+}
+*/
+
+/*
+      files={{
+        "/src/App.tsx": code,
+        ...sharedFiles,
+      }}
+*/
+
+const loadFiles = {
+    '/src/App.tsx': {
+      code: `
+// sandpack react editor
+import { useState } from 'react'
+
+export default function App () {
+  const [count, setCount] = useState(0)
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      Clicked {count} times
+    </button>
+  )
+}
+`,
+      active: true, // visible on load? default `false`
+      hidden: false // visible in tab list? default `true`
+    },
+}
+
 export default function CodeViewer({
   code,
-  showEditor = false,
+  showEditor = true,
 }: {
   code: string;
   showEditor?: boolean;
 }) {
   return showEditor ? (
     <Sandpack
+	  files={loadFiles}
       options={{
-        showNavigator: true,
+		readOnly: false,
         editorHeight: "80vh",
-        showTabs: false,
+        showConsole: true,
+        showLineNumbers: true,
+        showTabs: true,
+        showNavigator: true,
         ...sharedOptions,
-      }}
-      files={{
-        "App.tsx": code,
-        ...sharedFiles,
       }}
       {...sharedProps}
     />
   ) : (
     <SandpackProvider
       files={{
-        "App.tsx": code,
+        "/src/app/page.tsx": code,
         ...sharedFiles,
       }}
       className="flex h-full w-full grow flex-col justify-center"
@@ -42,9 +81,13 @@ export default function CodeViewer({
       {...sharedProps}
     >
       <SandpackPreview
+        files={{
+          "/src/app/page.tsx": code,
+          ...sharedFiles,
+        }}
         className="flex h-full w-full grow flex-col justify-center p-4 md:pt-16"
-        showOpenInCodeSandbox={false}
-        showRefreshButton={false}
+        showOpenInCodeSandbox={true}
+        showRefreshButton={true}
       />
     </SandpackProvider>
   );

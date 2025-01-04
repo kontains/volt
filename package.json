@@ -10,14 +10,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@codesandbox/sandpack-client": "2.19.8",
     "@codesandbox/sandpack-react": "^2.19.10",
     "@codesandbox/sandpack-themes": "^2.0.21",
+    "@codesandbox/sdk": "^0.0.6",
+    "@conform-to/zod": "^1.1.5",
+    "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.1.5",
     "@prisma/client": "^5.18.0",
     "@radix-ui/react-radio-group": "^1.2.0",
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-switch": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
+    "@vercel/og": "^0.6.2",
     "ai": "^4.0.22",
     "dedent": "^1.5.3",
     "framer-motion": "^11.3.19",
@@ -25,7 +30,9 @@
     "ollama-ai-provider": "^1.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "shadcn-ui": "^0.9.4",
     "sonner": "^1.5.0",
+    "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -39,6 +46,7 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "prisma": "^5.18.0",
     "tailwindcss": "^3.4.1",
+    "tsup": "^8.3.5",
     "typescript": "^5.7.2"
   }
 }

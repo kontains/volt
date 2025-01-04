@@ -6,9 +6,16 @@
 import { ollama } from "ollama-ai-provider";
 import { streamText } from "ai";
 import { createStreamableValue } from "ai/rsc";
-import { Message } from "./types";
+import { Message } from "./types.tsx";
+
+import prisma from "@/lib/prisma";
+import shadcnDocs from "@/lib/shadcn-docs";
+import dedent from "dedent";
+import { notFound } from "next/navigation";
+import { z } from "zod";
 
 export async function continueConversation(history: Message[]): Promise<{ messages: Message[]; newMessage: string }> {
+
   "use server";
 
   const stream = createStreamableValue();
