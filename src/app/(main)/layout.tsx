@@ -1,13 +1,17 @@
 
 // layout.tsx
 
-import "./globals.css";
+import "@/src/app/(main)/globals.css";
+
 import { Metadata } from "next";
 import Image from "next/image";
-import bgImg from "/assets/img/vector.jpg";
-import Footer from "/components/Footer";
-import Header from "/components/Header";
-import ThemeToggle from "/components/ThemeToggle";
+
+import bgImg from "@/src/assets/img/vector.jpg";
+
+import Footer from "@/src/components/Footer";
+import Header from "@/src/components/Header";
+
+import ThemeToggle from "@/src/components/ThemeToggle";
 
 let title = "Volt";
 let description = "Coding Agent";
@@ -19,7 +23,7 @@ export const metadata: Metadata = {
   title: 'Volt',
   description: 'Coding Agent',
   icons: {
-    icon: "/assets/img/icon.ico",
+    icon: "@/src/assets/img/icon.ico",
   },
 };
 
@@ -29,6 +33,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
+  <body>
     <div className="bg-black dark:bg-dark antialiased dark:text-gray-100 w-full h-full">
       <div className="absolute inset-x-0 flex justify-center">
         <Image
@@ -50,5 +55,6 @@ export default function Layout({
         </div>
       </div>
     </div>
+  </body>
   );
 }

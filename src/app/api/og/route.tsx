@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { domain } from "/components/utils/domain";
+import { domain } from "@/src/app/utils/domain";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const prompt = searchParams.get("prompt");

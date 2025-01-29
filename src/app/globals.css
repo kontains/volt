@@ -3,11 +3,50 @@
 @tailwind components;
 @tailwind utilities;
 
-.w-full-minus-10 {
-  width: calc(100% - 10px);
+/* Font Definitions */
+@font-face {
+  font-family: "Aeonik";
+  src: url("/Aeonik/Aeonik-Regular.ttf");
+  font-weight: 400;
+  font-style: normal;
 }
 
+@font-face {
+  font-family: "Aeonik";
+  src: url("/Aeonik/Aeonik-Medium.ttf");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Aeonik";
+  src: url("/Aeonik/Aeonik-Bold.ttf");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Animation Utilities */
+@layer utilities {
+  .animated-gradient {
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+}
+
+.w-full-minus-10 { width: calc(100% - 10px); }
+
+/* Smooth Transitions */
 @layer base {
+  
+  body {
+	@apply font-sans antialiased transition-colors duration-300;
+	/* bg-background text-foreground */
+  }
+  
+  ::selection {
+    @apply bg-blue-500/30 dark:bg-blue-400/30;
+  }
+  
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
@@ -54,31 +93,38 @@
   }
 }
 
-@layer base {
-  body {
-    @apply font-sans antialiased bg-background text-foreground;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-200 dark:bg-gray-700;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-300 dark:bg-gray-600;
+}
+
+/* Glass Effect */
+.glass {
+  @apply bg-white/10 backdrop-blur-sm dark:bg-gray-900/10;
+}
+
+/* Reduce Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-}
-
-@font-face {
-  font-family: "Aeonik";
-  src: url("/Aeonik/Aeonik-Regular.ttf");
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Aeonik";
-  src: url("/Aeonik/Aeonik-Medium.ttf");
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Aeonik";
-  src: url("/Aeonik/Aeonik-Bold.ttf");
-  font-weight: 700;
-  font-style: normal;
 }
 
 .draggable-container {

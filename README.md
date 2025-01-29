@@ -5,39 +5,54 @@
   Code Agent – writing apps locally, mostly with Qwen.
 </p>
 
+
 ### Local LLMs
 
 - Ollama server (required)
 - Qwen models by Alibaba (optional)
+- Deepseek R1 (pending)
+
+  📝: (`qwen2.5-coder:7b` is currently hardcoded in `actions.tsx`)
+
 
 ### Current build
 
-- Next.js app router with React/Tailwind.
-- Some components from Llamacoder.
-- Code sandbox by Sandpack.
+  📝: (Select an Ollama model before prompting the agent!)
 
-### Working
+- Next.js app router with React/Tailwind
+- Some components from Llamacoder
+- Code sandbox by Sandpack
 
-- Type a question then click on 'Chat' for assistance.
+- Token stats & app settings by [nexaforge-dev](https://github.com/ageborn-dev/nexaforge-dev)
 
-### Todo
 
-- pending: fix dark mode (it turns chat text off)
+### Features
 
-- ui       menu, buttons, and much else besides.
-- wiring:  toggle chat window on/off.
-- wiring:  preview currently shows default react 'hello world', not the shown `App.tsx` code.
-- wiring:  `qwen2.5-coder:7b` is currently hardcoded in `actions.tsx`.
-- wiring:  agent responses not yet handled by coding sandbox.
+- Code + Preview frames
+- Chat, Settings & Token frames (WIP)
+
+  📝: (System prompt preset for React-based `App.tsx`)
+  
+
+### Prep / Planning
+
+  📝: (Works in progress)
+
+- 🔌:  dark mode
+- 🔌:  draggable frames
+- 🔌:  remember chosen model
+- 🔌:  thinking frame for Deepseek R1
+
 
 ### Cloning & running
 
 1. Clone repo: `git clone https://github.com/kontains/volt`
 2. Start [Ollama](https://github.com/ollama/ollama/releases/) server on your machine.
-   NOTE: (`qwen2.5-coder:7b` is currently hardcoded in `actions.tsx`)
-
 3. Run `npm install --legacy-peer-deps` then `npm run dev` to start locally.
 4. Go to `http://localhost:3000/?t=1` in your browser.
+
+   📝: (Defaults to first available port after 3000 if busy)
+
 
 ### Contributing
 

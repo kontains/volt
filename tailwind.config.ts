@@ -1,7 +1,9 @@
 import type { Config } from "tailwindcss";
+import colors from "tailwindcss/colors";
+import defaultTheme from "tailwindcss/defaultTheme";
 
-export default {
-  darkMode: ["class"],
+const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,10 +12,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        brand: "#E1E7EC",
+        gray: colors.slate,
+      },
+      backgroundColor: {
+        dark: "#0B1120",
+      },
+      backgroundImage: {
+        'dark-radial': 'radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%)',
+      },
+      fontFamily: {
+        sans: ['"Aeonik"', ...defaultTheme.fontFamily.sans],
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+};
+
+export default config;
