@@ -2,8 +2,8 @@
 // page.tsx [id]
 
 import { notFound } from "next/navigation";
-import CodeViewer from "/components/code-viewer";
-import client from "/components/lib/prisma";
+import CodeViewer from "@/src/components/code-viewer";
+import client from "@/src/lib/prisma";
 import type { Metadata, NextPageWithLayout } from "next";
 import { cache } from "react";
 

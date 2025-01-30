@@ -1,26 +1,39 @@
 
 // layout.tsx
 
-import "./globals.css";
-import { Metadata } from "next";
-import Image from "next/image";
-import bgImg from "/assets/img/vector.jpg";
-import Footer from "/components/Footer";
-import Header from "/components/Header";
-import { ThemeProvider } from "/components/ThemeProvider";
+import type { Metadata } from "next";
+
+import "@/src/app/globals.css";
+
+import { ThemeProvider } from "@/src/components/ThemeProvider";
 
 let title = "Volt";
 let description = "Coding Agent";
-let url = "http://localhost:3000"; // static port
-let ogimage = "";
-let sitename = "http://localhost:3000"; // static port
+let url = "https://gitub.com/kontains/volt";
+let ogimage = "@/src/assets/vector.jpg";
+let sitename = "kustomzone.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(url),
-  title: 'Volt',
-  description: 'Coding Agent',
+  title,
+  description,
   icons: {
-    icon: "/assets/img/icon.ico",
+    icon: "@/src/assets/icon.ico",
+  },
+  openGraph: {
+    images: [ogimage],
+    title,
+    description,
+    url: url,
+    siteName: sitename,
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [ogimage],
+    title,
+    description,
   },
 };
 
@@ -31,26 +44,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-     <body className="bg-black">
-      <div className="absolute inset-x-0 flex justify-center">
-        <Image
-          src={bgImg}
-          alt=""
-          className="w-full h-full mix-blend-screen"
-          priority
-        />
-      </div>
-
-      <div className="isolate">
-        <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center py-2">
-          <Header />
-           <ThemeProvider>
-             {children}
-           </ThemeProvider>
-          <Footer />
-        </div>
-      </div>
-     </body>
+      <ThemeProvider>
+        {children}
+      </ThemeProvider>
     </html>
   );
 }
