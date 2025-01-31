@@ -38,10 +38,10 @@
 
   📝: (Works in progress)
 
-- 🔌:  dark mode
-- 🔌:  draggable frames
-- 🔌:  remember chosen model
-- 🔌:  thinking frame for Deepseek R1
+ 🔌  dark mode
+ 🔌  draggable frames
+ 🔌  remember chosen model
+ 🔌  [thinking frame](https://github.com/kontains/volt/discussions/5) for Qwen Coder / Deepseek R1
 
 
 ### Cloning & running
