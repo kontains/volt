@@ -12,7 +12,10 @@ import { Sparkles, Wand2, ChevronRight, Settings2, Loader2, Cpu } from "lucide-r
 import * as Select from "@radix-ui/react-select";
 import { motion } from "framer-motion";
 import { FormEvent, useEffect, useState, useMemo, useCallback } from "react";
-import LoadingDots from "@/src/components/loading-dots";
+
+const ThinkingIndicator = () => (
+    <div>💡</div>
+);
 
 import {
   AI_PROVIDERS,
@@ -584,7 +587,7 @@ export default function Home() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   name="prompt"
-				  className="min-h-[100px] w-full resize-none rounded-[7px] whitespace-normal break-words bg-transparent px-6 py-5 text-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-700 font-semibold text-gray-300 hover:text-orange-400 placeholder:text-gray-600 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-green-300"
+                  className="min-h-[100px] w-full resize-none rounded-[7px] whitespace-normal break-words bg-transparent px-6 py-5 text-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-700 font-semibold text-gray-500 hover:text-orange-400 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-green-300"
                   placeholder={
                     status === "brainstorming"
                       ? "Generating idea..."
@@ -601,7 +604,7 @@ export default function Home() {
                   type="button"
                   onClick={generateAppIdea}
                   disabled={loading}
-                  className="group rounded-lg p-2 transition-all duration-200 hover:bg-white/30 disabled:opacity-50"
+                  className="group rounded-lg p-2 transition-all duration-200 hover:bg-white/30 disabled:opacity-30"
                   title="App suggestion"
                 >
                   <Sparkles className="h-5 w-5 text-yellow-300 group-hover:text-yellow-200" />
@@ -610,7 +613,7 @@ export default function Home() {
                   type="button"
                   onClick={refinePrompt}
                   disabled={loading || !prompt}
-                  className="group rounded-lg p-2 transition-all duration-200 hover:bg-white/30 disabled:opacity-50"
+                  className="group rounded-lg p-2 transition-all duration-200 hover:bg-white/30 disabled:opacity-30"
                   title="Refine prompt"
                 >
                   <Wand2 className="h-5 w-5 text-emerald-300 group-hover:text-emerald-200" />
@@ -618,14 +621,13 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={loading || !prompt}
-				  strokeWidth={2.5}
-                  className="group rounded-lg p-2 transition-all duration-200 hover:bg-white/30 disabled:opacity-50"
+                  className="group rounded-lg p-2 transition-all duration-200 hover:bg-white/30 disabled:opacity-100"
                   title="Generate code"
                 >
                   {status === "creating" ? (
-                    <LoadingDots color="green" style="large" strokeWidth={2.5} />
+                    <ThinkingIndicator />
                   ) : (
-                    <ChevronRight className="h-5 w-5 text-orange-500 group-hover:text-orange-200" strokeWidth={2.5} />
+                    <ChevronRight className="h-5 w-5 text-lg font-semibold text-orange-500 group-hover:text-orange-200" />
                   )}
                 </button>
               </div>
@@ -633,7 +635,7 @@ export default function Home() {
           </div>
 		  
 
-          <div className="fixed top-[5px] left-[5px] w-50 h-6 flex sm:items-center rounded-[9px] border-[1px] border-solid border-[#605050] bg-[rgba(104,108,125,0.10)] shadow-[0px_2px_3px_2px_rgba(0,0,0,0.25)]">
+          <div className="fixed top-[5px] left-[5px] w-50 h-6 flex sm:items-center rounded-[9px] border-[1px] border-solid border-[#605050]">
             <div className="flex items-center justify-between gap-2 sm:justify-center">
                 <Select.Root
                   name="model"
@@ -644,7 +646,7 @@ export default function Home() {
                   <Select.Trigger 
                     className={`group flex w-100 max-w-xs items-center -inset-1 gap-3 rounded-[7px] border-[1px] border-solid border-[#A0A09A] bg-[rgba(14,18,25,0.30)] 
 					${ currentModelValid ? 'bg-white/40' : 'bg-red-100/40' } 
-					shadow-[0px_2px_3px_2px_rgba(0,0,0,0.35)] text-sm text-white-800 backdrop-blur-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-800`}
+					shadow-[0px_2px_3px_2px_rgba(0,0,0,0.35)] text-sm text-gray-100 backdrop-blur-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-800`}
                   >
                     <Select.Value className="text-black-800">
                       {!currentModelValid ? 'Refreshing models...' : undefined}

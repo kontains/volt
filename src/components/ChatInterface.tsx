@@ -610,20 +610,14 @@ Technical Guidelines:
     }
   };
 
-  const ThinkingIndicator = () => (
-    <div className="flex items-center gap-2">
-      <div className="flex gap-1">
-        <div className="h-2 w-2 animate-bounce rounded-full bg-blue-500 [animation-delay:-0.3s]"></div>
-        <div className="h-2 w-2 animate-bounce rounded-full bg-blue-500 [animation-delay:-0.15s]"></div>
-        <div className="h-2 w-2 animate-bounce rounded-full bg-blue-500"></div>
-      </div>
-    </div>
-  );
+const ThinkingIndicator = () => (
+    <div className="h-5 w-5 text-lg text-white-900">💡</div>
+);
 
   if (!visible) return null;
 
   return (
-   
+  
   <motion.div 
     drag
     dragElastic={0}
@@ -637,6 +631,9 @@ Technical Guidelines:
       cursor: 'grab',
       visible: 'false',
     }}
+    whileDrag={{
+      pointerEvents: 'none',
+    }}
   >
 	<div
       className={`fixed bottom-4 right-4 z-50 flex w-96 flex-col rounded-lg border border-white/20 bg-white/10 backdrop-blur-lg transition-all duration-300 ${
@@ -649,7 +646,7 @@ Technical Guidelines:
       >
         <div className="flex items-center gap-2">
           <MessageSquare className="h-4 w-4 text-blue-500" />
-          <h3 className="text-sm font-medium text-white">Refinement Chat</h3>
+          <h3 className="text-sm font-medium text-white">Chat</h3>
         </div>
         <div className="flex items-center gap-2">
           {loading && <Loader2 className="h-4 w-4 animate-spin text-white" />}
@@ -703,7 +700,7 @@ Technical Guidelines:
                     ) : (
                       <>
                         <p className="text-sm">{message.content}</p>
-                        <span className="mt-1 text-xs opacity-70">
+                        <span className="mt-1 text-xs opacity-75">
                           {new Date(message.timestamp).toLocaleTimeString()}
                         </span>
                       </>

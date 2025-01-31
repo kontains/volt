@@ -64,7 +64,7 @@
 
 (sample)
 
-[![ui-dark](https://github.com/kontains/volt/blob/main/assets/img/update.jpg)](https://github.com/kontains/volt)
+[![ui-dark](https://github.com/kontains/volt/blob/main/src/assets/img/update.jpg)](https://github.com/kontains/volt)
 
 ---
 
