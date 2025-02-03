@@ -30,14 +30,14 @@
         "nsis",
         "portable"
       ],
-      "icon": "assets/icon.png"
+      "icon": "src/assets/icon.png"
     },
     "mac": {
       "target": [
         "dmg",
         "zip"
       ],
-      "icon": "assets/icon.icns"
+      "icon": "src/assets/icon.icns"
     },
     "linux": {
       "target": [
@@ -45,7 +45,7 @@
         "deb",
         "rpm"
       ],
-      "icon": "assets/icon.png"
+      "icon": "src/assets/icon.png"
     }
   },
   "eslintConfig": {
