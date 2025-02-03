@@ -2,7 +2,7 @@
 <h1 align="center">Volt</h1>
 
 <p align="center">
-  Code Agent – writing apps locally, mostly with Qwen.
+  Code Agent – writing apps locally, mostly with Qwen or Deepseek
 </p>
 
 
@@ -22,16 +22,17 @@
 - Next.js app router with React/Tailwind
 - Some components from Llamacoder
 - Code sandbox by Sandpack
-
+- Electron builder by OpenJS Foundation.
 - Token stats & app settings by [nexaforge-dev](https://github.com/ageborn-dev/nexaforge-dev)
 
 
 ### Features
 
 - Code + Preview frames
-- Chat, Settings & Token frames (WIP)
+- Chat, Settings & Token frames
+- Builds as an Electron app, or runs in a browser
 
-  📝: (System prompt preset for React-based `App.tsx`)
+  📝: (System prompt is currently preset for creating a React-based `App.tsx` codebase)
   
 
 ### Prep / Planning
@@ -41,23 +42,29 @@
  🔌  dark mode
  🔌  draggable frames
  🔌  remember chosen model
+ 🔌  add resize/close buttons for Electron app
  🔌  [thinking frame](https://github.com/kontains/volt/discussions/5) for Qwen Coder / Deepseek R1
+ 
 
+### Cloning & Building
 
-### Cloning & running
+1.  Clone repo: `git clone https://github.com/kontains/volt`
+2.  Start [Ollama](https://github.com/ollama/ollama/releases/) server on your machine.
+3.  Run `npm install --legacy-peer-deps`
 
-1. Clone repo: `git clone https://github.com/kontains/volt`
-2. Start [Ollama](https://github.com/ollama/ollama/releases/) server on your machine.
-3. Run `npm install --legacy-peer-deps` then `npm run dev` to start locally.
-4. Go to `http://localhost:3000/?t=1` in your browser.
+run in a browser:
+  4.  `npm run dev` then open a browser at: `http://localhost:3000/?t=1`  
+     📝: (Defaults to first available port after 3000 if busy)
 
-   📝: (Defaults to first available port after 3000 if busy)
+or build and run the app:
+  5.  `npm run build`
+  6.  `npm run electron-dev` 
 
 
 ### Contributing
 
-- currently a WIP.
-- Issues and PRs are open.
+- Work in progress
+- Issues and PRs are open
 - [![Discord](https://img.shields.io/discord/416779691525931008?color=%237289da&label=Discord)](https://discord.gg/zGn7MS6) 
 
 ---
