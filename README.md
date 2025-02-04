@@ -1,18 +1,9 @@
 
-<h1 align="center">Volt</h1>
+<div align="center">
 
-<p align="center">
-  Code Agent – writing apps locally, mostly with Qwen or Deepseek
-</p>
+ ![Repo Card](https://github-readme-stats.vercel.app/api/pin/?username=kontains\&repo=volt\&show_owner=true\&title_color=fff\&icon_color=f9f9f9\&text_color=9f9f9f\&bg_color=151515)
 
-
-### Local LLMs
-
-  📝: (`qwen2.5-coder:7b` is currently hardcoded in `actions.tsx`)
-
-- Ollama server (required)
-- Qwen models by Alibaba (optional)
-- Deepseek R1 (pending)
+</div>
 
 ### Current build
 
@@ -31,6 +22,14 @@
 - Code + Preview frames
 - Chat, Settings & Token frames
 - Builds as an Electron app, or runs in a browser
+
+### Local LLMs
+
+  📝: (`qwen2.5-coder:7b` is currently hardcoded in `actions.tsx`)
+
+- Ollama server (required)
+- Qwen models by Alibaba (optional)
+- Deepseek R1 (pending)
 
 ### Prep / Planning
 
@@ -64,8 +63,6 @@ or build and run the app: `npm run build`  &  `npm run electron-dev`
 [![ui-dark](https://github.com/kontains/volt/blob/main/src/assets/img/update.jpg)](https://github.com/kontains/volt)
 
 ---
-
-### Stargazers
 
 [![Stargazers over time](https://starchart.cc/kontains/volt.svg?variant=dark)](https://starchart.cc/kontains/volt)
 
